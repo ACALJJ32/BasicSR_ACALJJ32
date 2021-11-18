@@ -9,17 +9,6 @@ pip install -r requirements.txt
 BASICSR_EXT=True python setup.py develop
 ```
 
-## Put your lq videos in lr_video folder
-
-```
-mkdir lr_video  # put lq vidoes
-mkdir sr_video  # sr results
-
-mkdir weight    # put pre-trained model
-cd weight
-mkdir edvr
-```
-
 ## Download pre-trained model
 ```
 百度网盘

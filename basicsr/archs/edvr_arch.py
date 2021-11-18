@@ -349,6 +349,8 @@ class EDVR(nn.Module):
         return lrs.view(n, t, c, h + pad_h, w + pad_w)
 
     def forward(self, x):
+        b, t, c, h_input, w_input = x.size()
+
         # padding input lrs
         x = self.spatial_padding(x)
 
@@ -409,4 +411,4 @@ class EDVR(nn.Module):
             base = F.interpolate(x_center, scale_factor=4, mode='bilinear', align_corners=False)
 
         out += base
-        return out
+        return out[:, :, 0:h_input*4, 0:w_input*4]

@@ -1,7 +1,7 @@
 import torch, os
 from os import path as osp
 from math import ceil
-
+import sys
 from yaml import load
 from basicsr.data import build_dataloader, build_dataset
 from basicsr.utils.options import parse_options
@@ -67,6 +67,8 @@ def demo_pipeline(root_path):
     # parse options, set distributed setting, set ramdom seed
     opt, args = parse_options(root_path, is_train=False)
 
+    print("video path: ",args.video_path)
+
     video_name = osp.basename(args.video_path).split(".")[0]
 
     torch.backends.cudnn.benchmark = True
@@ -109,7 +111,7 @@ def demo_pipeline(root_path):
     model.eval()
 
     # set min size
-    min_size = 921600
+    min_size = 921599
 
     # test clips
     for test_loader in test_loaders:
