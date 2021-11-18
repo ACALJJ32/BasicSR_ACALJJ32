@@ -280,7 +280,8 @@ class EDVR(nn.Module):
                  center_frame_idx=None,
                  hr_in=False,
                  with_predeblur=False,
-                 with_tsa=True):
+                 with_tsa=True,
+                 scale=4):
         super(EDVR, self).__init__()
         if center_frame_idx is None:
             self.center_frame_idx = num_frame // 2
@@ -289,6 +290,7 @@ class EDVR(nn.Module):
         self.hr_in = hr_in
         self.with_predeblur = with_predeblur
         self.with_tsa = with_tsa
+        self.scale = scale
 
         # extract features for each frame
         if self.with_predeblur:
@@ -402,13 +404,19 @@ class EDVR(nn.Module):
 
         out = self.reconstruction(feat)
         out = self.lrelu(self.pixel_shuffle(self.upconv1(out)))
-        out = self.lrelu(self.pixel_shuffle(self.upconv2(out)))
-        out = self.lrelu(self.conv_hr(out))
+
+        if self.scale == 4:
+            out = self.lrelu(self.pixel_shuffle(self.upconv2(out)))
+            out = self.lrelu(self.conv_hr(out))
+        else:
+            out = self.lrelu(self.conv_hr(out))
+
         out = self.conv_last(out)
+
         if self.hr_in:
             base = x_center
         else:
-            base = F.interpolate(x_center, scale_factor=4, mode='bilinear', align_corners=False)
+            base = F.interpolate(x_center, scale_factor=self.scale, mode='bilinear', align_corners=False)
 
         out += base
-        return out[:, :, 0:h_input*4, 0:w_input*4]
+        return out[:, :, 0:h_input*self.scale, 0:w_input*self.scale]

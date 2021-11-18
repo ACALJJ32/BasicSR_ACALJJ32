@@ -30,6 +30,7 @@ network_g:
   hr_in: false
   with_predeblur: false
   with_tsa: true
+  scale: 4
 
 # path
 path:
